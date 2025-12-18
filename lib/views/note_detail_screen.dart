@@ -4,7 +4,7 @@ import '../models/note.dart';
 import '../viewmodels/note_provider.dart';
 
 class NoteDetailScreen extends StatefulWidget {
-  final Note? note; // Si es null, estamos creando. Si tiene valor, editamos.
+  final Note? note;
   const NoteDetailScreen({super.key, this.note});
 
   @override
@@ -28,7 +28,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   void _saveNote() {
     if (_formKey.currentState!.validate()) {
       final newNote = Note(
-        id: widget.note?.id, // Mantiene el ID si es edición
+        id: widget.note?.id,
         title: _titleController.text,
         content: _contentController.text,
         updatedAt: DateTime.now(),
@@ -36,7 +36,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       );
 
       Provider.of<NoteProvider>(context, listen: false).addOrUpdateNote(newNote);
-      Navigator.of(context).pop(); // Vuelve a la lista
+      Navigator.of(context).pop();
     }
   }
 
