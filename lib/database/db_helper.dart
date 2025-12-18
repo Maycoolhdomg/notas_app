@@ -23,7 +23,12 @@ class DBHelper {
 
   static Future<List<Note>> getNotes() async {
     final db = await DBHelper.database();
-    final List<Map<String, dynamic>> maps = await db.query('notes', orderBy: 'isPinned DESC, updatedAt DESC');
+    // Ordena primero por isPinned (descendente, 1 antes que 0) 
+    // y luego por fecha (más reciente arriba)
+    final List<Map<String, dynamic>> maps = await db.query(
+      'notes', 
+      orderBy: 'isPinned DESC, updatedAt DESC'
+    );
     return List.generate(maps.length, (i) => Note.fromMap(maps[i]));
   }
 }

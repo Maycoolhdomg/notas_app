@@ -65,15 +65,31 @@ class NotesListScreen extends StatelessWidget {
                             child: Card(
                               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               child: ListTile(
-                                title: Text(note.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                subtitle: Text(note.content, maxLines: 1, overflow: TextOverflow.ellipsis),
-                                trailing: note.isPinned == 1 ? const Icon(Icons.push_pin, color: Colors.blue) : null,
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (ctx) => NoteDetailScreen(note: note)),
-                                  );
+                                title: Text(note.title),
+                                subtitle: Text(note.content),
+                                // Icono indicador si ya tiene pin
+                                leading: note.isPinned == 1 
+                                    ? const Icon(Icons.push_pin, color: Colors.blue) 
+                                    : null,
+                                // Botón para poner/quitar pin
+                                trailing: IconButton(
+                                  icon: Icon(
+                                    note.isPinned == 1 ? Icons.push_pin : Icons.push_pin_outlined,
+                                    color: note.isPinned == 1 ? Colors.blue : Colors.grey,
+                                  ),
+                                onPressed: () async {
+                                  try {
+                                    await Provider.of<NoteProvider>(context, listen: false).togglePin(note);
+                                  } catch (error) {
+                                    // Mostrar error si ya hay 2 notas ancladas
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(error.toString())),
+                                    );
+                                  }
                                 },
                               ),
+                              onTap: () { /* Navegar a edición */ },
+                            ),
                             ),
                           );
                         },

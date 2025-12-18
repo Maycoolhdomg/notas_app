@@ -29,13 +29,25 @@ class NoteProvider with ChangeNotifier {
   }
 
   Future<void> togglePin(Note note) async {
-    final updatedNote = Note(
-      id: note.id,
-      title: note.title,
-      content: note.content,
-      updatedAt: DateTime.now(),
-      isPinned: note.isPinned == 0 ? 1 : 0,
-    );
-    await addOrUpdateNote(updatedNote);
+  // 1. Contar cuántas notas tienen pin actualmente
+  final pinnedCount = _items.where((n) => n.isPinned == 1).length;
+
+  // 2. Si intentamos poner pin y ya hay 2, mostrar un aviso (lanzar error)
+  if (note.isPinned == 0 && pinnedCount >= 2) {
+    throw Exception("Solo puedes anclar hasta 2 notas");
   }
+
+  // 3. Crear la nota actualizada invirtiendo el valor de isPinned
+  final updatedNote = Note(
+    id: note.id,
+    title: note.title,
+    content: note.content,
+    updatedAt: DateTime.now(),
+    isPinned: note.isPinned == 0 ? 1 : 0,
+  );
+
+  // 4. Guardar en DB y refrescar
+  await DBHelper.insertNote(updatedNote);
+  await fetchAndSetNotes();
+}
 }
